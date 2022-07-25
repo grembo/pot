@@ -7,6 +7,16 @@ zfs()
 
 }
 
+mkdir()
+{
+	__monitor MKDIR "$@"
+}
+
+stat()
+{
+	echo 700
+}
+
 # UUT
 . ../share/pot/rename.sh
 
@@ -48,6 +58,7 @@ test_rn_zfs_001()
 	assertEquals "zfs c6 args" "rename" "${ZFS_CALL6_ARG1}"
 	assertEquals "zfs c6 args" "zpot/jails/test-pot" "${ZFS_CALL6_ARG2}"
 	assertEquals "zfs c6 args" "zpot/jails/new-pot" "${ZFS_CALL6_ARG3}"
+	assertEquals "mkdir calls" "0" "$MKDIR_CALLS"
 }
 
 test_rn_zfs_002()
@@ -62,6 +73,7 @@ test_rn_zfs_002()
 	assertEquals "zfs c4 args" "rename" "${ZFS_CALL4_ARG1}"
 	assertEquals "zfs c4 args" "zpot/jails/test-pot-2" "${ZFS_CALL4_ARG2}"
 	assertEquals "zfs c4 args" "zpot/jails/new-pot-2" "${ZFS_CALL4_ARG3}"
+	assertEquals "mkdir calls" "0" "$MKDIR_CALLS"
 }
 
 test_rn_zfs_003()
@@ -76,6 +88,8 @@ test_rn_zfs_003()
 	assertEquals "zfs c4 args" "rename" "${ZFS_CALL4_ARG1}"
 	assertEquals "zfs c4 args" "zpot/jails/test-pot-single" "${ZFS_CALL4_ARG2}"
 	assertEquals "zfs c4 args" "zpot/jails/new-pot-single" "${ZFS_CALL4_ARG3}"
+	assertEquals "mkdir calls" "1" "$MKDIR_CALLS"
+	assertEquals "mkdir 1 arg2" "${POT_FS_ROOT}/jails/new-pot-single/m" "$MKDIR_CALL1_ARG2"
 }
 
 setUp()
@@ -83,6 +97,7 @@ setUp()
 	common_setUp
 	ZFS_CALLS=0
 	ZDVALID_CALLS=0
+	MKDIR_CALLS=0
 
 	POT_ZFS_ROOT=zpot
 }
