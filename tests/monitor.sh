@@ -1,5 +1,10 @@
 #!/bin/sh
 
+if [ -z "$POT_MONITOR_TMP" ]; then
+	POT_MONITOR_TMP=$(mktemp /tmp/pot-monitor.XXXXXX)
+	export POT_MONITOR_TMP
+fi
+
 __monitor()
 {
 	local M i C
@@ -13,5 +18,6 @@ __monitor()
 		eval ${M}_CALL${C}_ARG${i}=\$1
 		shift
 	done
+
 }
 
