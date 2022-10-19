@@ -38,6 +38,9 @@ empty_check() {
 	if [ -n "$(pot ls -q)" ]; then
 		echo "POT LS IS:"
 		pot ls -q
+		ls -al /opt/pot/jails
+		ls -al /opt/pot/jails/*
+		zfs list
 		error "$1" "pot not deleted"
 	fi
 	if [ -n "$(pot ls -qb)" ]; then
