@@ -77,8 +77,14 @@ jobs:
           echo "## installed packages"
           pkg info
           #
+          ### Create zpool ###############################################
+          dd if=/dev/zero of=/zfs1 bs=1 count=1 seek=2G
+          zdev=$(mdconfig -a -t vnode -S 4096 -f /zfs1)
+          zpool create -f zroot "$zdev"
+          #
           ### Run CI tests ################################################
           cd "$WORKSPACE"
+          cp -f etc/pot/pot.conf.default etc/pot/pot.conf
           cd tests/CI
           ./run.sh
           #
