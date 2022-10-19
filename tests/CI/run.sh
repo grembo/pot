@@ -5,11 +5,13 @@ export PATH=$POT_PATH/bin:$PATH
 timestamp="$(date +%Y%m%d%H%M)"
 export logfile="pot-ci-${timestamp}"
 
+tail -F "$logfile"
+
 error() {
 	test_name="${1:-unknown}"
 	echo "Test ${test_name} failed ($2)" >> $logfile
 	end
-	exit
+	exit 1
 }
 
 begin()
@@ -20,7 +22,7 @@ begin()
 	fi
 	if [ ! -d /var/cache/pot ]; then
 		echo "pot's cache cannot be generated - aborting"
-		exit
+		exit 1
 	fi
 }
 
