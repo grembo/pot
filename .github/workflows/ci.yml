@@ -38,7 +38,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Run tests/CI/run.sh
-      uses: vmactions/freebsd-vm@0.2.9
+      uses: vmactions/freebsd-vm@v0.2.9
       with:
         mem: 8192
         usesh: true
