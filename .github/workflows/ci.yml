@@ -1,0 +1,88 @@
+# This is a basic workflow to help you get started with Actions
+
+name: ci-test
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  push:
+    branches: [ runtest-action ]
+#  pull_request:
+#    branches: [ master ]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
+
+    # Runs a single command using the runners shell
+    - name: Run a one-line script
+      run: cd tests && ./test-suite.sh
+
+  test_freebsd:
+    name: Tests/FreeBSD test suite
+    runs-on: ${{ matrix.job.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        job:
+          - { os: macos-12, features: "dist-client,dist-server" }
+    steps:
+    - uses: actions/checkout@v3
+    - name: Prepare, build and test
+      uses: vmactions/freebsd-vm@b528c16ee726e448eda5b1a78a96b7dc81899b02
+      with:
+        mem: 8192
+        usesh: true
+        prepare: pkg install -y curl gmake potnet freebsd-release-manifests nmap
+        run: |
+          #####################################################################################
+          ###  Prepare, build, and test
+          #####################################################################################
+          ###  based on ref: <https://github.com/rust-lang/rustup/pull/2783>
+          ###  and on ref: <https://github.com/uutils/coreutils/commit/86c610a84b8b6c>
+          ###  * NOTE: All steps need to be run in this block, otherwise, we are operating back
+          ###    on the mac host
+          set -exo pipefail
+          #
+          ### Basic user setup ################################################################
+          TEST_USER=tester
+          TEST_USER_HOME="/opt/$TEST_USER"
+          REPO_NAME=${GITHUB_WORKSPACE##*/}
+          WORKSPACE_PARENT="/Users/runner/work/${REPO_NAME}"
+          WORKSPACE="${WORKSPACE_PARENT}/${REPO_NAME}"
+          OS_VERSION="$(freebsd-version | awk -F- '{print $1}')"
+          PUB_INTF="$(netstat -4rn | grep default | awk '{ print $4}')"
+          ifconfig
+          #
+          mkdir -p "$TEST_USER_HOME"
+          pw adduser -n "$TEST_USER" -d "$TEST_USER_HOME" -c "Tester" -h -
+          chown -R "$TEST_USER":"$TEST_USER" "$TEST_USER_HOME"
+          chown -R "$TEST_USER":"$TEST_USER" "/$WORKSPACE_PARENT"/
+          whoami
+          #
+          ### Output some information about the environment  ##################################
+          # environment
+          echo "## environment"
+          env | sort
+          # tooling info
+          echo "## tooling info"
+          cargo -V
+          rustc -V
+          echo "## installed packages"
+          pkg info
+          #
+          ### Run CI tests ################################################
+          cd "$WORKSPACE"
+          cd tests/CI
+          ./run.sh
+          #
+          ### Finished ########################################################################
+          echo "Done"
