@@ -84,7 +84,7 @@ jobs:
           #
           ### Run CI tests ################################################
           cd "$WORKSPACE"
-          cp -f etc/pot/pot.conf.default etc/pot/pot.conf
+          cp -f etc/pot/pot.default.conf etc/pot/pot.conf
           cd tests/CI
           ./run.sh
           #
