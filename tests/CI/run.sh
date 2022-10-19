@@ -5,7 +5,7 @@ export PATH=$POT_PATH/bin:$PATH
 timestamp="$(date +%Y%m%d%H%M)"
 export logfile="pot-ci-${timestamp}"
 
-tail -F "$logfile"
+tail -F "$logfile" &
 
 error() {
 	test_name="${1:-unknown}"
