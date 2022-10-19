@@ -74,9 +74,6 @@ jobs:
           echo "## environment"
           env | sort
           # tooling info
-          echo "## tooling info"
-          cargo -V
-          rustc -V
           echo "## installed packages"
           pkg info
           #
