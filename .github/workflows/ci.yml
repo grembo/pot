@@ -33,11 +33,12 @@ jobs:
       fail-fast: false
       matrix:
         job:
-          - { os: macos-12, features: "dist-client,dist-server" }
+          - { os: macos-12 }
+        release: [ "13.1" ]
     steps:
     - uses: actions/checkout@v3
-    - name: Prepare, build and test
-      uses: vmactions/freebsd-vm@b528c16ee726e448eda5b1a78a96b7dc81899b02
+    - name: Run tests/CI/run.sh
+      uses: vmactions/freebsd-vm@0.2.9
       with:
         mem: 8192
         usesh: true
