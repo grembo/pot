@@ -5,8 +5,6 @@ export PATH=$POT_PATH/bin:$PATH
 timestamp="$(date +%Y%m%d%H%M)"
 export logfile="pot-ci-${timestamp}"
 
-tail -F "$logfile" &
-
 error() {
 	test_name="${1:-unknown}"
 	echo "Test ${test_name} failed ($2)" >> $logfile
@@ -531,6 +529,7 @@ TYPES="single multi"
 NETWORKS="inherit public-bridge private-bridge"
 begin
 
+pot init -f ""
 empty_check initial_check
 pfctl -F all
 for s in $STACKS ; do

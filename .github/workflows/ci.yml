@@ -86,7 +86,12 @@ jobs:
           cd "$WORKSPACE"
           cp -f etc/pot/pot.default.conf etc/pot/pot.conf
           cd tests/CI
-          ./run.sh
+          set +e
+          FAULT=0
+          ./run.sh || FAULT=1
+          echo "Log output:"
+          cat pot-ci-*
+          if [ $FAULT -ne 0 ]; then exit 1; fi
           #
           ### Finished ########################################################################
           echo "Done"
