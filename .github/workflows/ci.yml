@@ -1,7 +1,9 @@
 name: Run CI
-on: [ workflow_dispatch ]
-#  push:
-#    branches: [ master ]
+on:
+  workflow_dispatch:
+    branches: [ runtest-action ]
+  push:
+    branches: [ runtest-action ]
 #  pull_request:
 #    branches: [ master ]
 
