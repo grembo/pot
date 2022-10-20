@@ -163,12 +163,12 @@ export_test() {
 	local type=$2
 	case $type in
 	single)
-		if ! pot export -p $name -t 0 ; then
+		if ! pot export -p $name -t 0 -l 0; then
 			error $name export-single
 		fi
 		;;
 	multi)
-		if pot export -p $name ; then
+		if pot export -p $name -l 0; then
 			error $name export-no-multi
 		fi
 		return
@@ -527,7 +527,14 @@ BROKEN_FLV
 	empty_check $name
 }
 
-STACKS="ipv4 dual ipv6"
+STACKS="ipv4"
+if ping6 -c3 www.kame.net; then
+	echo "IPv6 seems to work, add dual and ipv6 stacks"
+	STACKS="$STACKS dual ipv6"
+else
+	echo "IPv6 not available, only testing $STACKS"
+fi
+
 VERSIONS="12.3 13.1"
 TYPES="single multi"
 #NETWORKS="alias inherit public-bridge private-bridge"
